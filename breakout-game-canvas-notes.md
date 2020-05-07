@@ -167,3 +167,28 @@ function drawPaddle() {
 //set up event listeners to listen for key press: 
     //document.addEventListener("keydown", keyDownHandler, false);
     //document.addEventListener("keyup", keyUpHandler, false);
+
+//set keyUpHandler and keyDownHandler: 
+        function keyDownHandler(e) {
+            if (e.key == "Right" || e.key == "ArrowRight") {
+                rightPressed = true;
+            }
+            else if (e.key == "Left" || e.key == "ArrowLeft") {
+                leftPressed = true;
+            }
+        }
+
+        function keyUpHandler(e) {
+            if (e.key == "Right" || e.key == "ArrowRight") {
+                rightPressed = false;
+            }
+            else if (e.key == "Left" || e.key == "ArrowLeft") {
+                leftPressed = false;
+            }
+        }
+
+// paddle LOGIC: 
+// In draw() function: if right is pressed, move 5 spaces right. If left is pressed, move 5 spaces left:
+//         if(rightPressed) {paddleX += 5;} else if(leftPressed) {paddleX -= 5;}
+
+    

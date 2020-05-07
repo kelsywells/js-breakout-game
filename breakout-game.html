@@ -109,9 +109,15 @@
 
             if (rightPressed) {
                 paddleX += 5;
+                if (paddleX + paddleWidth > canvas.width) {
+                    paddleX = canvas.width - paddleWidth;
+                }
             }
             else if (leftPressed) {
                 paddleX -= 5;
+                if (paddleX < 0) {
+                    paddleX = 0;
+                }
             }
         }
 
@@ -147,7 +153,12 @@
         //CONTROL PADDLE: 
         // define rightPressed and leftPressed variables as false (they are not pressed on load)
         // set event listeners to determined when key is pressed 
-
+        // paddle LOGIC: 
+        // under draw(): if right is pressed, move 5 spaces right. If left is pressed, move 5 spaces left:
+        //         if(rightPressed) {paddleX += 5;} else if(leftPressed) {paddleX -= 5;}
+        // paddle will fly off the screen when the buttons are held. Change code to stay within the boundaries: 
+        // if (rightPressed) paddle += 5; if (paddleX + paddleWidth > canvas.width) { paddleX= canvas.width - paddleWidth}; } 
+        // else if (leftPressed) {paddleX -= 5; if (paddleX < 0) { paddleX = 0; }
 
 
 
