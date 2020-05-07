@@ -1,0 +1,22 @@
+{
+  "name": "js-breakout-game",
+  "version": "1.0.0",
+  "description": "Following a tutorial on MOZ:  \r https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript/",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kelsywells/js-breakout-game.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kelsywells/js-breakout-game/issues"
+  },
+  "homepage": "https://github.com/kelsywells/js-breakout-game#readme",
+  "dependencies": {
+    "node": "^14.2.0"
+  }
+}
