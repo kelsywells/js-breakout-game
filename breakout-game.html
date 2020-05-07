@@ -34,37 +34,35 @@
     <script>
         var canvas = document.getElementById("myCanvas");
         var ctx = canvas.getContext("2d");
-
         // instead of specific position at x,y coords on arc, define starting point with var x, var y (see below)
-
         var x = canvas.width / 2;
         var y = canvas.height - 30;
         var dx = 2;
         var dy = -2;
         var ballRadius = 15;
-        var paddleHeight = 20;
-        var paddleWidth = 125;
+        var paddleHeight = 15;
+        var paddleWidth = 145;
         var paddleX = (canvas.width - paddleWidth) / 2;
         var rightPressed = false;
         var leftPressed = false;
         var brickRowCount = 4;
         var brickColumnCount = 12;
-        var brickWidth = 85;
+        var brickWidth = 90;
         var brickHeight = 50;
         var brickPadding = 10;
         var brickOffsetTop = 30;
         var brickOffsetLeft = 30;
+        var score = 0;
 
         // Hold all bricks in an array. Brick columns (c) contain brick rows (r) containing x and y positions to paint each brick
+        // status: 1 = the brick currently remains
         var bricks = [];
         for (var c = 0; c < brickColumnCount; c++) {
             bricks[c] = [];
             for (var r = 0; r < brickRowCount; r++) {
-                bricks[c][r] = { x: 0, y: 0 };
+                bricks[c][r] = { x: 0, y: 0, status: 1 };
             }
         }
-
-
 
         // draw function will be called every 10ms forever because setInterval is infinite in nature
         // see breakout-game-canvas-notes.md for notes on beginPath(), ctx, arc()
@@ -77,6 +75,46 @@
         // values will be updated for the next frame.
         // Collision detection: if the ball touches the wall, we will change its direction. ballRadius will hold the radius of the circle and be used for 
         // calculations.
+
+        document.addEventListener("keydown", keyDownHandler, false);
+        document.addEventListener("keyup", keyUpHandler, false);
+
+        function keyDownHandler(e) {
+            if (e.key == "Right" || e.key == "ArrowRight") {
+                rightPressed = true;
+            }
+            else if (e.key == "Left" || e.key == "ArrowLeft") {
+                leftPressed = true;
+            }
+        }
+
+        function keyUpHandler(e) {
+            if (e.key == "Right" || e.key == "ArrowRight") {
+                rightPressed = false;
+            }
+            else if (e.key == "Left" || e.key == "ArrowLeft") {
+                leftPressed = false;
+            }
+        }
+
+        // loop through bricks and compare every brick's position with the ball's coordinates as each frame is drawn &
+        // if the center of the ball is inside the coords of a brick, change the direction of the ball &
+        // if the brick is active (status 1) check for collision, if collision happens, set status to 0 so it will disappear.
+        function collisionDetection() {
+            for (var c = 0; c < brickColumnCount; c++) {
+                for (var r = 0; r < brickRowCount; r++) {
+                    var b = bricks[c][r];
+                    if (b.status == 1) {
+                        if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+                            dy = -dy;
+                            b.status = 0;
+                        }
+                    }
+
+                }
+            }
+        }
+
 
         function drawBall() {
             ctx.beginPath();
@@ -106,17 +144,20 @@
         function drawBricks() {
             for (var c = 0; c < brickColumnCount; c++) {
                 for (var r = 0; r < brickRowCount; r++) {
-                    var brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
-                    var brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
-                    bricks[c][r].x = brickX;
-                    bricks[c][r].y = brickY;
-                    ctx.beginPath();
-                    ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                    ctx.fillStyle = "red";
-                    ctx.strokeStyle = "aqua";
-                    ctx.stroke();
-                    ctx.fill();
-                    ctx.closePath();
+                    // status == 1: draw brick during frame; status == 0: don't draw brick during frame 
+                    if (bricks[c][r].status == 1) {
+                        var brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+                        var brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+                        bricks[c][r].x = brickX;
+                        bricks[c][r].y = brickY;
+                        ctx.beginPath();
+                        ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                        ctx.fillStyle = "red";
+                        ctx.strokeStyle = "aqua";
+                        ctx.stroke();
+                        ctx.fill();
+                        ctx.closePath();
+                    }
                 }
             }
         }
@@ -127,6 +168,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBall();
             drawPaddle();
+            collisionDetection();
             drawBricks();
             x += dx;
             y += dy;
@@ -143,6 +185,12 @@
             // not the circumference. To fix this, subtract ballRadius from the width & height, and change 0 to ballRadius.
 
 
+            // MERGE the two if statements with || : 
+            // Left & right walls: repeat steps with x instead of y and width instead of height: 
+            if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+                dx = -dx;
+            }
+
             if (y + dy < ballRadius) {
                 dy = -dy;
             } else if (y + dy > canvas.height - ballRadius) {
@@ -155,48 +203,23 @@
                     clearInterval(interval);
                 }
             }
-            // MERGE the two if statements with || : 
-            // Left & right walls: repeat steps with x instead of y and width instead of height: 
-            if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
-                dx = -dx;
+
+
+            if (rightPressed && paddleX < canvas.width - paddleWidth) {
+                paddleX += 7;
+            }
+            else if (leftPressed && paddleX > 0) {
+                paddleX -= 7;
             }
 
-            if (rightPressed) {
-                paddleX += 5;
-                if (paddleX + paddleWidth > canvas.width) {
-                    paddleX = canvas.width - paddleWidth;
-                }
-            }
-            else if (leftPressed) {
-                paddleX -= 5;
-                if (paddleX < 0) {
-                    paddleX = 0;
-                }
-            }
+            x += dx;
+            y += dy;
         }
 
-        document.addEventListener("keydown", keyDownHandler, false);
-        document.addEventListener("keyup", keyUpHandler, false);
 
-        function keyDownHandler(e) {
-            if (e.key == "Right" || e.key == "ArrowRight") {
-                rightPressed = true;
-            }
-            else if (e.key == "Left" || e.key == "ArrowLeft") {
-                leftPressed = true;
-            }
-        }
 
-        function keyUpHandler(e) {
-            if (e.key == "Right" || e.key == "ArrowRight") {
-                rightPressed = false;
-            }
-            else if (e.key == "Left" || e.key == "ArrowLeft") {
-                leftPressed = false;
-            }
-        }
 
-        var interval = setInterval(draw, 6);
+        var interval = setInterval(draw, 8);
 
 
 
