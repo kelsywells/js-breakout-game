@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <title>Kelsy's Breakout Game</title>
-    <!-- FULL TUTORIAL: https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript/Bounce_off_the_walls -->
+    <!-- Check README for full tutorial -->
 
     <!-- CSS START -->
     <style>
@@ -47,6 +47,24 @@
         var paddleX = (canvas.width - paddleWidth) / 2;
         var rightPressed = false;
         var leftPressed = false;
+        var brickRowCount = 4;
+        var brickColumnCount = 12;
+        var brickWidth = 85;
+        var brickHeight = 50;
+        var brickPadding = 10;
+        var brickOffsetTop = 30;
+        var brickOffsetLeft = 30;
+
+        // Hold all bricks in an array. Brick columns (c) contain brick rows (r) containing x and y positions to paint each brick
+        var bricks = [];
+        for (var c = 0; c < brickColumnCount; c++) {
+            bricks[c] = [];
+            for (var r = 0; r < brickRowCount; r++) {
+                bricks[c][r] = { x: 0, y: 0 };
+            }
+        }
+
+
 
         // draw function will be called every 10ms forever because setInterval is infinite in nature
         // see breakout-game-canvas-notes.md for notes on beginPath(), ctx, arc()
@@ -80,14 +98,40 @@
             ctx.closePath();
         }
 
+        // draw bricks: looping through rows and columns to set x and y position of each brick. 
+        // call drawBricks() under draw()
+        // This is currently drawing all bricks in the same (0, 0) location. We need to have a calculation to move brick location with 
+        // every iteration by using offset vars:
+
+        function drawBricks() {
+            for (var c = 0; c < brickColumnCount; c++) {
+                for (var r = 0; r < brickRowCount; r++) {
+                    var brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+                    var brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+                    bricks[c][r].x = brickX;
+                    bricks[c][r].y = brickY;
+                    ctx.beginPath();
+                    ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                    ctx.fillStyle = "red";
+                    ctx.strokeStyle = "aqua";
+                    ctx.stroke();
+                    ctx.fill();
+                    ctx.closePath();
+                }
+            }
+        }
+
+
+
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBall();
             drawPaddle();
+            drawBricks();
             x += dx;
             y += dy;
 
-            // bounce ball off walls (inside draw()):
+            // bounce ball off walls (inside draw() ):
 
             // top wall: if the y value of the balls position (y+dy, see draw() func) is < 0, change the y-axis movement direction by 
             // making it equal to itself, reversed (dy= -dy)
@@ -152,7 +196,7 @@
             }
         }
 
-        var interval = setInterval(draw, 10);
+        var interval = setInterval(draw, 6);
 
 
 
@@ -172,6 +216,8 @@
         //Instead of letting the ball bounce off all 4 edges, end the game when the ball hits the bottom, by adding an alert and 
         // removing the original bounce statement
         //let the paddle hit the ball back by updating the same statement
+
+
 
 
 

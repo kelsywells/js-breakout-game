@@ -219,4 +219,23 @@ function drawPaddle() {
                 clearInterval(interval);
             }
         }
+
+//ADD BRICKS TO BREAK: 
+
+//define variables: 
+        var brickRowCount = 3;
+        var brickColumnCount = 5;
+        var brickWidth = 75;
+        var brickHeight = 20;
+        var brickPadding = 10;
+        var brickOffsetTop = 30;
+        var brickOffsetLeft = 30;
+
+// Hold all bricks in an array. Brick columns (c) contain brick rows (r) containing x and y positions to paint each brick
+        var bricks = [];
+        for (var c = 0; c < brickColumnCount; c++) {
+            bricks[c] = [];
+            for (var r = 0; r < brickRowCount; r++) {
+                bricks[c][r] = { x: 0, y: 0 };
+            }
     
