@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Kelsy's Breakout Game</title>
+    <!-- FULL TUTORIAL: https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript/Bounce_off_the_walls -->
+
+    <!-- CSS START -->
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+
+        canvas {
+            background: #ffff00;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+    <!-- CSS END -->
+</head>
+
+<body>
+
+    <!-- Canvas element is used to draw graphics on a page using js. Always set id, width, height -->
+    <canvas id="myCanvas" width="480" height="320"></canvas>
+
+    <!-- grab html canvas element -->
+    <!-- ctx= 2d rendering context= the tool we use to paint on the canvas -->
+    <script>
+        var canvas = document.getElementById("myCanvas");
+        var ctx = canvas.getContext("2d");
+
+        // instead of specific position at x,y coords on arc, define starting point with var x, var y (see below)
+
+        var x = canvas.width / 2;
+        var y = canvas.height - 30;
+        var dx = 2;
+        var dy = -2;
+        var ballRadius = 10;
+        var paddleHeight = 10;
+        var paddleWidth = 75;
+        var paddleX = (canvas.width - paddleWidth) / 2;
+        var rightPressed = false;
+        var leftPressed = false;
+
+        // draw function will be called every 10ms forever because setInterval is infinite in nature
+        // see breakout-game-canvas-notes.md for notes on beginPath(), ctx, arc()
+        // once ball is moving, ctx code will ensure ball is now repainted on every frame
+        // add small value to x & y after every frame has been drawn to make the ball appear moving. Define values as dx & dy.
+        // update x & y with dx & dy variable on every frame x+=dx, y+=dy. Ball will move but leave a trail because a new circle is added to every frame.
+        // clearRect() will clear canvas content & takes 4 parameters: x,y coords at top left of rect, and x,y coords at bottom right of rect. This specified 
+        //area will be cleared of any content previously painted there.
+        // The ball will now move without a trail. Every 10 milliseconds the canvas is cleared, the ball will be drawn on a given position and the x and y 
+        // values will be updated for the next frame.
+        // Collision detection: if the ball touches the wall, we will change its direction. ballRadius will hold the radius of the circle and be used for 
+        // calculations.
+
+        function drawBall() {
+            ctx.beginPath();
+            ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+            ctx.fillStyle = "#9B5DE5";
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawPaddle() {
+            ctx.beginPath();
+            ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+            ctx.fillStyle = "#9B5DE5";
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBall();
+            drawPaddle();
+            x += dx;
+            y += dy;
+
+            // bounce ball off walls (inside draw()):
+
+            // top wall: if the y value of the balls position (y+dy, see draw() func) is < 0, change the y-axis movement direction by 
+            // making it equal to itself, reversed (dy= -dy)
+            // LOOKS LIKE: if (y + dy < 0) {dy = -dy}
+            // bottom wall:  
+            // canvas height: y values are counted from top left (0) to bottom right (height size=320) so canvas.height refers to the bottom wall
+            // LOOKS LIKE: if (y + dy > canvas.height) { dy = -dy }
+            // The ball should be bouncing off the walls, but sinking into them before bouncing. This is because the ball's radius is what's hitting the wall, 
+            // not the circumference. To fix this, subtract ballRadius from the width & height, and change 0 to ballRadius.
+
+            // MERGE the two if statements with || : 
+            if (y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
+                dy = -dy;
+            }
+            // Left & right walls: repeat steps with x instead of y and width instead of height: 
+            if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+                dx = -dx;
+            }
+        }
+
+        document.addEventListener("keydown", keyDownHandler, false);
+        document.addEventListener("keyup", keyUpHandler, false);
+
+        function keyDownHandler(e) {
+            if (e.key == "Right" || e.key == "ArrowRight") {
+                rightPressed = true;
+            }
+            else if (e.key == "Left" || e.key == "ArrowLeft") {
+                leftPressed = true;
+            }
+        }
+
+        function keyUpHandler(e) {
+            if (e.key == "Right" || e.key == "ArrowRight") {
+                rightPressed = false;
+            }
+            else if (e.key == "Left" || e.key == "ArrowLeft") {
+                leftPressed = false;
+            }
+        }
+
+        setInterval(draw, 4);
+
+
+
+        // CREATE PADDLE: 
+        // define variables: paddleHeight, paddleWidth, and paddleX for location on x axis.
+        // create a function to draw the paddle on the screen under drawBall() function. Call drawPaddle() in the draw() function.
+
+        //CONTROL PADDLE: 
+        // define rightPressed and leftPressed variables as false (they are not pressed on load)
+        // set event listeners to determined when key is pressed 
+
+
+
+
+
+    </script>
+
+</body>
+
+</html>
