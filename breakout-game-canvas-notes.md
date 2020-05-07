@@ -191,4 +191,32 @@ function drawPaddle() {
 // In draw() function: if right is pressed, move 5 spaces right. If left is pressed, move 5 spaces left:
 //         if(rightPressed) {paddleX += 5;} else if(leftPressed) {paddleX -= 5;}
 
+// paddle will fly off the screen when the buttons are held. Change code to stay within the boundaries: 
+        // if (rightPressed) paddle += 5; if (paddleX + paddleWidth > canvas.width) { paddleX= canvas.width - paddleWidth}; } 
+        // else if (leftPressed) {paddleX -= 5; if (paddleX < 0) { paddleX = 0; }
+
+//Instead of letting the ball bounce off all 4 edges, end the game when the ball hits the bottom, by adding an alert and removing the original bounce statement:
+
+            if (y + dy < ballRadius) {
+                dy = -dy;
+            } else if (y + dy > canvas.height - ballRadius) {
+                alert("YOU HAVE DIED");
+                document.location.reload();
+                clearInterval(interval); // Needed for Chrome to end game
+            }
+
+//Let the paddle hit the ball back by updating the same statement again: 
+
+        if(y + dy < ballRadius) {
+            dy = -dy;
+        } else if(y + dy > canvas.height-ballRadius) {
+            if(x > paddleX && x < paddleX + paddleWidth) {
+                dy = -dy;
+            }
+            else {
+                alert("YOU HAVE DIED");
+                document.location.reload();
+                clearInterval(interval);
+            }
+        }
     

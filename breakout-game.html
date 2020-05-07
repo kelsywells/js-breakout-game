@@ -98,10 +98,20 @@
             // The ball should be bouncing off the walls, but sinking into them before bouncing. This is because the ball's radius is what's hitting the wall, 
             // not the circumference. To fix this, subtract ballRadius from the width & height, and change 0 to ballRadius.
 
-            // MERGE the two if statements with || : 
-            if (y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
+
+            if (y + dy < ballRadius) {
                 dy = -dy;
+            } else if (y + dy > canvas.height - ballRadius) {
+                if (x > paddleX && x < paddleX + paddleWidth) {
+                    dy = -dy;
+                }
+                else {
+                    alert("YOU HAVE DIED");
+                    document.location.reload();
+                    clearInterval(interval);
+                }
             }
+            // MERGE the two if statements with || : 
             // Left & right walls: repeat steps with x instead of y and width instead of height: 
             if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
                 dx = -dx;
@@ -142,7 +152,7 @@
             }
         }
 
-        setInterval(draw, 4);
+        var interval = setInterval(draw, 10);
 
 
 
@@ -159,7 +169,9 @@
         // paddle will fly off the screen when the buttons are held. Change code to stay within the boundaries: 
         // if (rightPressed) paddle += 5; if (paddleX + paddleWidth > canvas.width) { paddleX= canvas.width - paddleWidth}; } 
         // else if (leftPressed) {paddleX -= 5; if (paddleX < 0) { paddleX = 0; }
-
+        //Instead of letting the ball bounce off all 4 edges, end the game when the ball hits the bottom, by adding an alert and 
+        // removing the original bounce statement
+        //let the paddle hit the ball back by updating the same statement
 
 
 
